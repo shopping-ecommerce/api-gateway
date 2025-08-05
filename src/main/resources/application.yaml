@@ -1,0 +1,112 @@
+server:
+  port: 8888
+
+app:
+  api-prefix: /shopping/api
+
+spring:
+  application:
+    name: shopping
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: ${AUTH_URL:http://auth-service:8080}
+          predicates:
+            - Path=${app.api-prefix}/authentication/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+#            - name: CircuitBreaker
+#              args:
+#                name: authenticationFallback
+#                fallbackUri: forward:/fallback/auth
+        - id: notify-service
+          uri: ${NOTIFY_URL:http://notify-service:8081}
+          predicates:
+            - Path=${app.api-prefix}/notifications/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+#            - name: CircuitBreaker
+#              args:
+#                name: notificationFallback
+#                fallbackUri: forward:/fallback/notification
+        - id: user-service
+          uri: ${USER_URL:http://user-service:8082}
+          predicates:
+            - Path=${app.api-prefix}/info/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+#            - name: CircuitBreaker
+#              args:
+#                name: userFallback
+#                fallbackUri: forward:/fallback/profiles
+        - id: file-service
+          uri: ${FILE_URL:http://file-service:8084}
+          predicates:
+            - Path=${app.api-prefix}/file/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+      default-filters:
+        - name: Retry
+          args:
+            retries: 3
+            methods: GET,POST
+            backoff:
+              firstBackoff: 50ms
+              maxBackoff: 500ms
+              factor: 2
+              basedOnPreviousValue: false
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 100
+        failureRateThreshold: 50
+        waitDurationInOpenState: 20s
+        permittedNumberOfCallsInHalfOpenState: 10
+        minimumNumberOfCalls: 10
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+    instances:
+      authenticationFallback:
+        baseConfig: default
+      userFallback:
+        baseConfig: default
+      notificationFallback:
+        baseConfig: default
+      fileFallback:
+        baseConfig: default
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
+
+#logging:
+#  level:
+#    org.springframework.cloud.gateway: TRACE
+#    reactor.netty: DEBUG
+#    org.springframework.web: DEBUG
