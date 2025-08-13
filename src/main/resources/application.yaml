@@ -55,6 +55,17 @@ spring:
 #              args:
 #                name: userFallback
 #                fallbackUri: forward:/fallback/profiles
+        - id: product-service
+          uri: ${PRODUCT_URL:http://product-service:8083}
+          predicates:
+                - Path=${app.api-prefix}/products/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
         - id: file-service
           uri: ${FILE_URL:http://file-service:8084}
           predicates:
@@ -66,7 +77,17 @@ spring:
                 key-resolver: "#{@ipKeyResolver}"
                 redis-rate-limiter.replenishRate: 10
                 redis-rate-limiter.burstCapacity: 20
-
+        - id: chat-ai-service
+          uri: ${CHAT_AI_URL:http://chat-ai-service:8085}
+          predicates:
+            - Path=${app.api-prefix}/chat/**
+          filters:
+              - StripPrefix=2
+              - name: RequestRateLimiter
+                args:
+                  key-resolver: "#{@ipKeyResolver}"
+                  redis-rate-limiter.replenishRate: 10
+                  redis-rate-limiter.burstCapacity: 20
       default-filters:
         - name: Retry
           args:
@@ -105,6 +126,9 @@ management:
     health:
       show-details: always
 
+services:
+  url:
+    auth-service: ${AUTH_URL:http://auth-service:8080}
 #logging:
 #  level:
 #    org.springframework.cloud.gateway: TRACE

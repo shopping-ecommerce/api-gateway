@@ -1,6 +1,7 @@
 package iuh.fit.fe.configuration;
 
 import iuh.fit.fe.repository.AuthenticationClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +17,12 @@ import java.util.List;
 @Configuration
 public class WebClientConfiguration {
     @Bean
-    WebClient webClient() {
-        return WebClient.builder().baseUrl("http://localhost:8080/authentication").build();
+    WebClient webClient(
+            @Value("${services.url.auth-service}") String authBaseUrl
+    ) {
+        return WebClient.builder()
+                .baseUrl(authBaseUrl) // lấy từ application.yml / biến môi trường
+                .build();
     }
     @Bean
     AuthenticationClient authenticationClient(WebClient webClient) {

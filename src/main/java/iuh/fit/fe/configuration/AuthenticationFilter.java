@@ -49,7 +49,9 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             "/file/media/download/.*",
             "/authentication/register",
             "/authentication/verifyOTP",
-            "/authentication/verifyFromEmail"
+            "/authentication/verifyFromEmail",
+            "/chat/.*",
+            "/chat"
     };
 
     @NonFinal
@@ -71,8 +73,10 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
                 .token(token)
                 .build()).flatMap(apiResponse -> {
                     if (apiResponse.getResult().isValid()) {
+                        log.info("Token is valid, proceeding with request");
                         return chain.filter(exchange);
                     } else {
+                        log.info("Token is invalid, returning unauthenticated response");
                         return unauthenticated(exchange.getResponse());
                     }
         }).onErrorResume(e -> unauthenticated(exchange.getResponse()));
