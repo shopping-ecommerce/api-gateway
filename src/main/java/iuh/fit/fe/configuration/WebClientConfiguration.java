@@ -31,12 +31,14 @@ public class WebClientConfiguration {
     }
     @Bean
     CorsWebFilter corsWebFilter() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("*"));
-        corsConfiguration.setAllowedHeaders(List.of("*"));
-        corsConfiguration.setAllowedMethods(List.of("*"));
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.setAllowedOriginPatterns(List.of("http://localhost:5173")); // KHÔNG dùng "*"
+        cors.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+        cors.setAllowedHeaders(List.of("Authorization","Content-Type","X-Requested-With","Cache-Control"));
+        cors.setExposedHeaders(List.of("Authorization","Set-Cookie"));
+        cors.setAllowCredentials(true); // BẮT BUỘC nếu FE dùng credentials: 'include'
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
+        source.registerCorsConfiguration("/**", cors);
         return new CorsWebFilter(source);
     }
 }
