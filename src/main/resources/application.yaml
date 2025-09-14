@@ -88,6 +88,28 @@ spring:
                   key-resolver: "#{@ipKeyResolver}"
                   redis-rate-limiter.replenishRate: 10
                   redis-rate-limiter.burstCapacity: 20
+        - id: order-service
+          uri: ${ORDER_URL:http://order-service:8086}
+          predicates:
+            - Path=${app.api-prefix}/order/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+        - id: cart-service
+          uri: ${CART_URL:http://cart-service:8087}
+          predicates:
+            - Path=${app.api-prefix}/cart/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
       default-filters:
         - name: Retry
           args:
