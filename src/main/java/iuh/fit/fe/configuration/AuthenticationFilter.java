@@ -53,9 +53,10 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             "/chat/.*",
             "/chat",
             "/product/getProducts",
-            "/info/sellers/searchByUserId/**",
-            "/info/sellers/searchBySellerId/**",
-            "/product/searchBySeller/**"
+            "/info/sellers/searchByUserId/.*",
+            "/info/sellers/searchBySellerId/.*",
+            "/product/searchBySeller/.*",
+            "/product/categories"
     };
 
     @NonFinal
