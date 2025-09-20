@@ -52,7 +52,10 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             "/authentication/verifyFromEmail",
             "/chat/.*",
             "/chat",
-            "/product/getProducts"
+            "/product/getProducts",
+            "/info/sellers/searchByUserId/**",
+            "/info/sellers/searchBySellerId/**",
+            "/product/searchBySeller/**"
     };
 
     @NonFinal
