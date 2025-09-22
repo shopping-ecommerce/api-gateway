@@ -55,6 +55,17 @@ spring:
                 key-resolver: "#{@ipKeyResolver}"
                 redis-rate-limiter.replenishRate: 10
                 redis-rate-limiter.burstCapacity: 20
+        - id: auth-service-users
+          uri: ${AUTH_URL:http://auth-service:8080}
+          predicates:
+            - Path=${app.api-prefix}/users/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
 
         - id: notify-service
           uri: ${NOTIFY_URL:http://notify-service:8081}
