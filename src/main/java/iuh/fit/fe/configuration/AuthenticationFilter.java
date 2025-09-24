@@ -59,7 +59,10 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             "/product/categories",
             "/product/searchByProduct/.*",
             "/product/searchBySizeAndID",
-            "/product/searchBySeller/.*"
+            "/product/searchBySeller/.*",
+            "/product/searchByCategory/.*",
+            "/product/search",
+            "/product/suggest"
     };
 
     @NonFinal
