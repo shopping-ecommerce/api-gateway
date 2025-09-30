@@ -63,7 +63,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             "/product/searchByCategory/.*",
             "/product/search",
             "/product/suggest",
-            "/info/profiles/[0-9a-fA-F\\-]{36}$"
+            "/info/profiles/[0-9a-fA-F\\-]{36}$",
+            "/chat-ai/.*",
     };
 
     @NonFinal
