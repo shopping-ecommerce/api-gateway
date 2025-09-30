@@ -118,7 +118,7 @@ spring:
         - id: chat-ai-service
           uri: ${CHAT_AI_URL:http://chat-ai-service:8085}
           predicates:
-            - Path=${app.api-prefix}/chat/**
+            - Path=${app.api-prefix}/chat-ai/**
           filters:
             - StripPrefix=2
             - name: RequestRateLimiter
