@@ -172,7 +172,7 @@ spring:
               args:
                 key-resolver: "#{@ipKeyResolver}"
                 redis-rate-limiter.replenishRate: 10
-                redis-rate-limiter.burstCapacity:
+                redis-rate-limiter.burstCapacity: 20
         - id: voucher-service
           uri: ${VOUCHER_URL:http://voucher-service:8090}
           predicates:
