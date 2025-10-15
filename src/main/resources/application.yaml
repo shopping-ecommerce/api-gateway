@@ -70,7 +70,7 @@ spring:
         - id: notify-service
           uri: ${NOTIFY_URL:http://notify-service:8081}
           predicates:
-            - Path=${app.api-prefix}/notifications/**
+            - Path=${app.api-prefix}/notification/**
           filters:
             - StripPrefix=2
             - name: RequestRateLimiter
