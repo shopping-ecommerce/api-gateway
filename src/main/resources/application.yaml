@@ -18,7 +18,7 @@ spring:
       globalcors:
         add-to-simple-url-handler-mapping: true
         corsConfigurations:
-          '[/**]':
+          "[/**]":
             allowedOrigins:
               - "http://localhost:5173"
               - "http://localhost:3000"
@@ -188,6 +188,17 @@ spring:
           uri: ${CHAT_URL:http://chat-service:5000}
           predicates:
             - Path=${app.api-prefix}/messages/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+        - id: gemini-service
+          uri: ${GEMINI_URL:http://gemini-service:5001}
+          predicates:
+            - Path=${app.api-prefix}/gemini/**
           filters:
             - StripPrefix=2
             - name: RequestRateLimiter
