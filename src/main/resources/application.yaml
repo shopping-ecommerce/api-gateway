@@ -206,6 +206,17 @@ spring:
                 key-resolver: "#{@ipKeyResolver}"
                 redis-rate-limiter.replenishRate: 10
                 redis-rate-limiter.burstCapacity: 20
+        - id: policy-service
+          uri: ${POLICY_URL:http://policy-service:8091}
+          predicates:
+            - Path=${app.api-prefix}/policy/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
       default-filters:
         - name: Retry
           args:
