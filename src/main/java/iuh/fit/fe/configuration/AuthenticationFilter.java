@@ -66,7 +66,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             "/info/profiles/[0-9a-fA-F\\-]{36}$",
             "/chat-ai/.*",
             "/payment/vn-pay-callback",
-            "/gemini/.*"
+            "/gemini/.*",
+            "/product/getBestSellingProducts"
     };
 
     @NonFinal
