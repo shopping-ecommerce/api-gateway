@@ -50,6 +50,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             "/authentication/register",
             "/authentication/verifyOTP",
             "/authentication/verifyFromEmail",
+            "/authentication/forgot-password",
+            "/authentication/reset-password",
             "/chat/.*",
             "/chat",
             "/product/getProducts",
