@@ -1,0 +1,273 @@
+server:
+  port: 8888
+
+app:
+  api-prefix: /shopping/api
+
+spring:
+  application:
+    name: shopping
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+      # password: ${REDIS_PASSWORD:} # Uncomment if needed
+
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins:
+              - "http://localhost:5173"
+              - "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            exposedHeaders:
+              - "Set-Cookie"
+            allowCredentials: true
+
+      routes:
+        - id: cors-preflight
+          uri: no://op
+          predicates:
+            - Method=OPTIONS
+            - Path=${app.api-prefix}/**
+          filters:
+            - SetStatus=200
+
+        - id: auth-service
+          uri: ${AUTH_URL:http://auth-service:8080}
+          predicates:
+            - Path=${app.api-prefix}/authentication/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+        - id: auth-service-users
+          uri: ${AUTH_URL:http://auth-service:8080}
+          predicates:
+            - Path=${app.api-prefix}/users/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+        - id: notify-service
+          uri: ${NOTIFY_URL:http://notify-service:8081}
+          predicates:
+            - Path=${app.api-prefix}/notification/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+        - id: user-service
+          uri: ${USER_URL:http://user-service:8082}
+          predicates:
+            - Path=${app.api-prefix}/info/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+        - id: product-service
+          uri: ${PRODUCT_URL:http://product-service:8083}
+          predicates:
+            - Path=${app.api-prefix}/product/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+        - id: file-service
+          uri: ${FILE_URL:http://file-service:8084}
+          predicates:
+            - Path=${app.api-prefix}/file/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+        - id: chat-ai-service
+          uri: ${CHAT_AI_URL:http://chat-ai-service:8085}
+          predicates:
+            - Path=${app.api-prefix}/chat-ai/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+        - id: order-service
+          uri: ${ORDER_URL:http://order-service:8086}
+          predicates:
+            - Path=${app.api-prefix}/order/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+        - id: cart-service
+          uri: ${CART_URL:http://cart-service:8087}
+          predicates:
+            - Path=${app.api-prefix}/cart/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+
+        - id: review-service
+          uri: ${REVIEW_URL:http://review-service:8088}
+          predicates:
+            - Path=${app.api-prefix}/feedback/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+        - id: payment-service
+          uri: ${PAYMENT_URL:http://payment-service:8089}
+          predicates:
+            - Path=${app.api-prefix}/payment/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+        - id: voucher-service
+          uri: ${VOUCHER_URL:http://voucher-service:8090}
+          predicates:
+            - Path=${app.api-prefix}/voucher/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+        - id: chat-service
+          uri: ${CHAT_URL:http://chat-service:5000}
+          predicates:
+            - Path=${app.api-prefix}/messages/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+        - id: gemini-service
+          uri: ${GEMINI_URL:http://gemini-service:5001}
+          predicates:
+            - Path=${app.api-prefix}/gemini/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+        - id: policy-service
+          uri: ${POLICY_URL:http://policy-service:8091}
+          predicates:
+            - Path=${app.api-prefix}/policy/**
+          filters:
+            - StripPrefix=2
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@ipKeyResolver}"
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+      default-filters:
+        - name: Retry
+          args:
+            retries: 3
+            methods:
+              - GET
+              - POST
+            backoff:
+              firstBackoff: 50ms
+              maxBackoff: 500ms
+              factor: 2
+              basedOnPreviousValue: false
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 100
+        failureRateThreshold: 50
+        waitDurationInOpenState: 20s
+        permittedNumberOfCallsInHalfOpenState: 10
+        minimumNumberOfCalls: 10
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+    instances:
+      authenticationFallback:
+        baseConfig: default
+      userFallback:
+        baseConfig: default
+      notificationFallback:
+        baseConfig: default
+      fileFallback:
+        baseConfig: default
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - gateway
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.web.cors: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+
+services:
+  url:
+    auth-service: ${AUTH_URL:http://auth-service:8080}
