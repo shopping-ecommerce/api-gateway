@@ -23,6 +23,7 @@ spring:
               - "http://localhost:5173"
               - "http://localhost:3000"
               - "https://shoppingiuh.id.vn"
+              - "https://admin.shoppingiuh.id.vn"
             allowedMethods:
               - GET
               - POST
