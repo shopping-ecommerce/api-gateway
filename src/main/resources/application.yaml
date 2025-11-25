@@ -197,6 +197,10 @@ spring:
                 key-resolver: "#{@ipKeyResolver}"
                 redis-rate-limiter.replenishRate: 10
                 redis-rate-limiter.burstCapacity: 20
+        - id: chat-ws
+          uri: ws://chat-service:5000
+          predicates:
+            - Path=/socket.io/**
         - id: gemini-service
           uri: ${GEMINI_URL:http://gemini-service:5001}
           predicates:
