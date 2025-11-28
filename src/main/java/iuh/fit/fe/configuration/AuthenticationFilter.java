@@ -70,7 +70,8 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             "/chat-ai/.*",
             "/payment/vn-pay-callback",
             "/gemini/.*",
-            "/product/getBestSellingProducts"
+            "/product/getBestSellingProducts",
+            "/feedback/review/[^/]+"
     };
 
     @NonFinal
