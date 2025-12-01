@@ -198,7 +198,7 @@ spring:
                 redis-rate-limiter.replenishRate: 10
                 redis-rate-limiter.burstCapacity: 20
         - id: chat-ws
-          uri: ws://chat-service:5000
+          uri: http://chat-service:5000
           predicates:
             - Path=/socket.io/**
         - id: gemini-service
