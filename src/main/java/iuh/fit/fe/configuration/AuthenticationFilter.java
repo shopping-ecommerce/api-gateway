@@ -106,8 +106,17 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         return -1;
     }
 
-    private boolean isPublicEndpoint(ServerHttpRequest path) {
-        return Arrays.stream(publicEndpoints).anyMatch(s -> path.getURI().getPath().matches(apiPrefix+s));
+    private boolean isPublicEndpoint(ServerHttpRequest request) {
+        String path = request.getURI().getPath();
+
+        // ✅ Cho socket.io đi qua gateway mà không cần Authorization header
+        if (path.startsWith("/socket.io")) {
+            return true;
+        }
+
+        // Phần cũ giữ nguyên
+        return Arrays.stream(publicEndpoints)
+                .anyMatch(s -> path.matches(apiPrefix + s));
     }
 
     Mono<Void> unauthenticated(ServerHttpResponse response) {
